@@ -36,7 +36,7 @@ namespace Tracer2.TracerAPI.Data
             innerMethods.Enqueue(method);
         }
 
-        public MethodNode getInnerMethod(String name, String className) {
+        public MethodNode GetInnerMethod(String name, String className) {
             foreach (var method in innerMethods) {
                 if (method.Name == name && method.ClassName == className) {
                     return method;
