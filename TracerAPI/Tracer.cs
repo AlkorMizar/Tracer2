@@ -29,7 +29,7 @@ namespace Tracer2.TracerAPI
             StackTrace stackTrace = new StackTrace();
             //разделить два потока для правильного подсчёта времени
             Thread thread = new Thread(() => {
-                result.AddNewMethod(new TreeNodeInfo(stackTrace, start));
+                result.AddNewMethod();
             });
             thread.Start();
         }
@@ -40,7 +40,7 @@ namespace Tracer2.TracerAPI
             StackTrace stackTrace = new StackTrace();
             //разделить два потока для правильного подсчёта времени
             Thread thread = new Thread(() => {
-                result.setTimeAndDeactivate(new TreeNodeInfo(stackTrace, end));
+                result.setTimeAndDeactivate();
             });
             thread.Start();
         }
