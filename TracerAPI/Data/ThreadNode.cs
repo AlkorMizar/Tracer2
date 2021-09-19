@@ -7,14 +7,39 @@ namespace Tracer2.TracerAPI.Data
 {
     class ThreadNode
     {
-        private String name;
-        public int ID { get;private set; }
-        public bool IsActive { get; set; }
+        public int Id { get; private set; }
+        public int Number { get;private set; }
         
         private MethodNode root;
-        
-        public void StartNewMethod() { }
-        public void StopMethod() { }
+
+        public ThreadNode(int id, int number) {
+            Id = id;
+            Number = number;
+            root = null;
+        }
+
+        public void StartNewMethod(String methodName, String className,String[,] path,long startTime) {
+            if (root != null)
+            {
+                MethodNode previousMethod = GetMethod(path);
+                if (previousMethod != null)
+                {
+                    previousMethod.AddInnerMethod(new MethodNode(methodName, className, startTime));
+                }
+            }
+            else 
+            {
+                root = new MethodNode(methodName, className, startTime);
+            }
+        }
+        public void StopMethod(String methodName, String className, String[,] path, long startTime) {
+            MethodNode method = GetMethod(path);
+            if (method != null)
+            {
+
+                previousMethod.AddInnerMethod(new MethodNode(methodName, className, startTime));
+            }
+        }
         private MethodNode GetMethod(String[,] path)
         {
             MethodNode method = root;

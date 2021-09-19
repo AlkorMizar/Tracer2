@@ -23,7 +23,7 @@ namespace Tracer2.TracerAPI.Data
             IsActive = true;
         }
 
-        public MethodNode(String _name, String _className, long _time, bool _isThread)
+        public MethodNode(String _name, String _className, long _time)
         {
             Name = _name;
             ClassName = _className;
