@@ -20,7 +20,7 @@ namespace Tracer2.TracerAPI
 
         public TraceResult GetTraceResult()
         {
-            throw new NotImplementedException();
+            return result;
         }
 
         private (String method, String _class, int thread, String[,] path) GenerateInfo(StackTrace stackTrace) {

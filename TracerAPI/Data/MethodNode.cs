@@ -21,19 +21,26 @@ namespace Tracer2.TracerAPI.Data
             ClassName = "";
             innerMethods = new ConcurrentQueue<MethodNode>();
             IsActive = true;
+            time = 0;
         }
 
-        public MethodNode(String _name, String _className, long _time)
+        public MethodNode(String _name, String _className, long start)
         {
             Name = _name;
             ClassName = _className;
             innerMethods = new ConcurrentQueue<MethodNode>();
             IsActive = true;
+            time = start;
         }
 
         public void AddInnerMethod(MethodNode method)
         {
             innerMethods.Enqueue(method);
+        }
+
+        public void Stop(long end) {
+            time -= end;
+            IsActive = false;
         }
 
         public MethodNode GetInnerMethod(String name, String className) {
