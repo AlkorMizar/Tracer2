@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Tracer2.TracerAPI.Data
 {
+    [Serializable]
     class ThreadNode
     {
         public int Id { get; private set; }

@@ -5,15 +5,18 @@ using System.Text;
 
 namespace Tracer2.TracerAPI.Data
 {
+    [Serializable]
     public class MethodNode
     {
-        public String Name { get; set; }
-        public String ClassName { get; set; }
+        public String Name { get; private set; }
+        public String ClassName { get; private set; }
         private long time;
         public long Time { get { return time; } }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; private set; }
 
+        //[NonSerialized]
         private ConcurrentStack<MethodNode> innerMethods;
+        //[NonSerialized]
         private readonly object balanceLock = new object();
         public MethodNode()
         {

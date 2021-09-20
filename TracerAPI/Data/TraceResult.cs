@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Tracer2.TracerAPI.Data
 {
+    [Serializable]
     public class TraceResult
     {
         ConcurrentQueue<ThreadNode> threads;
