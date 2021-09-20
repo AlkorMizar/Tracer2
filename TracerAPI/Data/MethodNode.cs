@@ -45,7 +45,7 @@ namespace Tracer2.TracerAPI.Data
 
         public MethodNode GetInnerMethod(String name, String className) {
             foreach (var method in innerMethods) {
-                if (method.Name == name && method.ClassName == className) {
+                if (method.Name == name && method.ClassName == className && method.IsActive) {
                     return method;
                 }
             }

@@ -8,8 +8,7 @@ namespace Tracer2.TracerAPI.Data
     public class TraceResult
     {
         ConcurrentQueue<ThreadNode> threads;
-        
-        //lock
+
         public void AddNewMethod(String name,String className,int threadId,String[,] path, long startTime)
         {
             ThreadNode thread = GetThread(threadId);
@@ -21,7 +20,6 @@ namespace Tracer2.TracerAPI.Data
             thread.StartNewMethod(name,className,path,startTime);
         }
 
-        //lock
         public void StopMetod(String name, String className, int threadId, String[,] path, long endTime) {
             ThreadNode thread = GetThread(threadId);
             if (thread != null)

@@ -24,6 +24,7 @@ namespace Tracer2.TracerAPI.Data
             {
                 previousMethod = root;    
             }
+
             previousMethod.AddInnerMethod(new MethodNode(methodName, className, startTime));
 
         }
@@ -39,7 +40,7 @@ namespace Tracer2.TracerAPI.Data
         {
             MethodNode method = root;
             int i = 0;
-            while (method != null && i<path.Length && method.IsActive) {
+            while (method != null && i<path.Length) {
                 method = method.GetInnerMethod(path[i, 0], path[i, 1]);
                 i++;
             }
