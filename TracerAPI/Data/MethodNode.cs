@@ -13,13 +13,13 @@ namespace Tracer2.TracerAPI.Data
         public long Time { get { return time; } }
         public bool IsActive { get; set; }
 
-        private ConcurrentQueue<MethodNode> innerMethods;
-
+        private ConcurrentStack<MethodNode> innerMethods;
+        private readonly object balanceLock = new object();
         public MethodNode()
         {
             Name = "";
             ClassName = "";
-            innerMethods = new ConcurrentQueue<MethodNode>();
+            innerMethods = new ConcurrentStack<MethodNode>();
             IsActive = true;
             time = 0;
         }
@@ -28,14 +28,14 @@ namespace Tracer2.TracerAPI.Data
         {
             Name = _name;
             ClassName = _className;
-            innerMethods = new ConcurrentQueue<MethodNode>();
+            innerMethods = new ConcurrentStack<MethodNode>();
             IsActive = true;
             time = start;
         }
 
         public void AddInnerMethod(MethodNode method)
         {
-            innerMethods.Enqueue(method);
+            innerMethods.Push(method);
         }
 
         public void Stop(long end) {
@@ -44,12 +44,23 @@ namespace Tracer2.TracerAPI.Data
         }
 
         public MethodNode GetInnerMethod(String name, String className) {
-            foreach (var method in innerMethods) {
-                if (method.Name == name && method.ClassName == className && method.IsActive) {
+            
+            foreach (var method in innerMethods)
+            {
+                if (method.IsThatMethod(name,className))
+                {
                     return method;
                 }
             }
             return null;
+        
+        }
+
+        private bool IsThatMethod(String name, String className) {
+            lock (balanceLock)
+            {
+                return Name == name && ClassName == className && IsActive;
+            }
         }
     }
 }
