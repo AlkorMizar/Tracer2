@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Tracer2.TracerAPI.Data
 {
@@ -10,13 +11,13 @@ namespace Tracer2.TracerAPI.Data
     {
         public String Name { get; private set; }
         public String ClassName { get; private set; }
-        private long time;
-        public long Time { get { return time; } }
+        public long Time { get; private set; }
         public bool IsActive { get; private set; }
 
-        //[NonSerialized]
+        
         private ConcurrentStack<MethodNode> innerMethods;
-        //[NonSerialized]
+        
+        [JsonIgnore]
         private readonly object balanceLock = new object();
         public MethodNode()
         {
@@ -24,7 +25,7 @@ namespace Tracer2.TracerAPI.Data
             ClassName = "";
             innerMethods = new ConcurrentStack<MethodNode>();
             IsActive = true;
-            time = 0;
+            Time = 0;
         }
 
         public MethodNode(String _name, String _className, long start)
@@ -33,7 +34,7 @@ namespace Tracer2.TracerAPI.Data
             ClassName = _className;
             innerMethods = new ConcurrentStack<MethodNode>();
             IsActive = true;
-            time = start;
+            Time = start;
         }
 
         public void AddInnerMethod(MethodNode method)
@@ -42,7 +43,7 @@ namespace Tracer2.TracerAPI.Data
         }
 
         public void Stop(long end) {
-            time -= end;
+            Time -= end;
             IsActive = false;
         }
 

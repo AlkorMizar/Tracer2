@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Tracer2.TracerAPI.Data
 {
@@ -9,6 +10,8 @@ namespace Tracer2.TracerAPI.Data
     class ThreadNode
     {
         public int Id { get; private set; }
+        
+        [JsonIgnore]
         public int Number { get;private set; }
         
         private readonly MethodNode root;

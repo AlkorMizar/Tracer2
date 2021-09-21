@@ -8,7 +8,7 @@ namespace Tracer2.TracerAPI.Data
     [Serializable]
     public class TraceResult
     {
-        ConcurrentQueue<ThreadNode> threads;
+        private ConcurrentQueue<ThreadNode> threads;
 
         public void AddNewMethod(String name,String className,int threadId,String[,] path, long startTime)
         {
