@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Tracer2.TracerAPI.Writer
 {
-    class ConsoleWriter
+    class ConsoleWriter : IWriter
     {
+        public void WriteAsync(string data)
+        {
+            Console.WriteLine(data);
+        }
     }
 }
