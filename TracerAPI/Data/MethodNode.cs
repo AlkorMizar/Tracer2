@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Tracer2.TracerAPI.Data
 {
-    [Serializable]
+    [DataContract()]
     public class MethodNode
     {
+        [DataMember(EmitDefaultValue = false)]
         public String Name { get; private set; }
+        [DataMember(EmitDefaultValue = false)]
         public String ClassName { get; private set; }
+        [DataMember(EmitDefaultValue = false)]
         public long Time { get; private set; }
+        
+        [JsonIgnore]
         public bool IsActive { get; private set; }
 
-        
+        [DataMember(EmitDefaultValue = false)]
         private ConcurrentStack<MethodNode> innerMethods;
         
         [JsonIgnore]

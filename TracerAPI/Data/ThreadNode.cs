@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Tracer2.TracerAPI.Data
 {
-    [Serializable]
+    [DataContract()]
     class ThreadNode
     {
+        [DataMember()]
         public int Id { get; private set; }
         
         [JsonIgnore]
         public int Number { get;private set; }
-        
+
+        [DataMember()]
         private readonly MethodNode root;
 
         public ThreadNode(int id, int number) {

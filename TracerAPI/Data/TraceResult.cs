@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Tracer2.TracerAPI.Data
 {
-    [Serializable]
+    [DataContract()]
     public class TraceResult
     {
+        [DataMember()]
         private ConcurrentQueue<ThreadNode> threads;
 
         public void AddNewMethod(String name,String className,int threadId,String[,] path, long startTime)
