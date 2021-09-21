@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -22,7 +23,7 @@ namespace Tracer2.TracerAPI.Data
 
         [DataMember(EmitDefaultValue = false)]
         private ConcurrentStack<MethodNode> innerMethods;
-        
+
         [JsonIgnore]
         private readonly object balanceLock = new object();
         public MethodNode()
@@ -71,6 +72,11 @@ namespace Tracer2.TracerAPI.Data
             {
                 return Name == name && ClassName == className && IsActive;
             }
+        }
+
+        public IEnumerator<MethodNode> GetEnumerator()
+        {
+            return innerMethods.GetEnumerator();
         }
     }
 }

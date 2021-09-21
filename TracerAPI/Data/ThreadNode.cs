@@ -12,7 +12,8 @@ namespace Tracer2.TracerAPI.Data
     {
         [DataMember()]
         public int Id { get; private set; }
-        
+        [DataMember()]
+        public long Time { get; private set; }
         [JsonIgnore]
         public int Number { get;private set; }
 
@@ -41,6 +42,7 @@ namespace Tracer2.TracerAPI.Data
             {
                 method = method.GetInnerMethod(methodName, className);
                 method.Stop(endTime);
+                RecountTime();
             }
         }
         private MethodNode GetMethod(String[,] path)
@@ -52,6 +54,17 @@ namespace Tracer2.TracerAPI.Data
                 i++;
             }
             return method;
+        }
+        private void RecountTime()
+        {
+            Time = 0;
+            foreach(var rootMethod in root)
+            {
+                if (!rootMethod.IsActive)
+                {
+                    Time += rootMethod.Time;
+                }
+            }
         }
     }
 }
