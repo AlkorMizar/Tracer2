@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Tracer2.TracerAPI
@@ -39,7 +40,6 @@ namespace Tracer2.TracerAPI
 				throw new Exception(string.Format
 				("failed to get timestamp. error code: {0}",
 				retcode));
-
 			long result = kernelTime + userTime;
 			return result;
 		}

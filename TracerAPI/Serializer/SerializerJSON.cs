@@ -9,7 +9,7 @@ namespace Tracer2.TracerAPI.Serializer
 {
     class SerializerJSON : ISerializer
     {
-        private SerializerJSON instance;
+        private static SerializerJSON instance;
         private JsonSerializerOptions options;
 
         public object JsonIgnoreCondition { get; private set; }
@@ -22,7 +22,7 @@ namespace Tracer2.TracerAPI.Serializer
             
         }
 
-        public SerializerJSON GetInstance() {
+        public static SerializerJSON GetInstance() {
             if (instance == null) 
             { instance = new SerializerJSON(); }
             return instance;

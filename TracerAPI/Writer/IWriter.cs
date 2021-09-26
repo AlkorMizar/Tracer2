@@ -6,6 +6,6 @@ namespace Tracer2.TracerAPI.Writer
 {
     interface IWriter
     {
-        void WriteAsync(String data);
+        void Write(String data);
     }
 }

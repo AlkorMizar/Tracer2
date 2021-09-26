@@ -4,21 +4,33 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace Tracer2.TracerAPI.Data
 {
-    [DataContract()]
-    class ThreadNode
+    [Serializable]
+    public class ThreadNode
     {
-        [DataMember()]
-        public int Id { get; private set; }
-        [DataMember()]
-        public long Time { get; private set; }
-        [JsonIgnore]
-        public int Number { get;private set; }
+        [XmlAttribute]
+        public int Id { get;   set; }
 
-        [DataMember()]
+        [XmlAttribute]
+        public long Time { get;   set; }
+
+        [System.Text.Json.Serialization.JsonIgnore,
+         XmlIgnore,
+         Newtonsoft.Json.JsonIgnore]
+        public int Number { get;  set; }
+
         private readonly MethodNode root;
+        public MethodNode[] Root { get { return root.InnerMethods; } set { } }
+
+        [System.Text.Json.Serialization.JsonIgnore, 
+         XmlIgnore,
+         Newtonsoft.Json.JsonIgnore]
+        private readonly object balanceLock = new object();
+
+        public ThreadNode() { }
 
         public ThreadNode(int id, int number) {
             Id = id;
@@ -37,13 +49,19 @@ namespace Tracer2.TracerAPI.Data
 
         }
         public void StopMethod(String methodName, String className, String[,] path, long endTime) {
+            
             MethodNode method = GetMethod(path);
+            if (method == null)
+            {
+                method = root;
+            }
+            method = method.GetInnerMethod(methodName, className);
             if (method != null)
             {
-                method = method.GetInnerMethod(methodName, className);
                 method.Stop(endTime);
                 RecountTime();
             }
+            
         }
         private MethodNode GetMethod(String[,] path)
         {

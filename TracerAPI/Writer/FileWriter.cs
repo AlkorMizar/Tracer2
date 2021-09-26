@@ -7,7 +7,7 @@ namespace Tracer2.TracerAPI.Writer
 {
     class FileWriter : IWriter
     {
-        public void WriteAsync(string data)
+        public void Write(string data)
         {
 
             try

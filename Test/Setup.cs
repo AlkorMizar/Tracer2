@@ -13,23 +13,26 @@ namespace Tracer2.Test
         private static ITracer _tracer;
 
         public static void main() {
-            _tracer 
+            
+            _tracer = new Tracer();
+
+            M0();
         }
 
-        public void M0()
+        public static void M0()
         {
             M1();
             M2();
         }
 
-        private void M1()
+        private static void M1()
         {
             _tracer.StartTrace();
             Thread.Sleep(100);
             _tracer.StopTrace();
         }
 
-        private void M2()
+        private static void M2()
         {
             _tracer.StartTrace();
             Thread.Sleep(200);

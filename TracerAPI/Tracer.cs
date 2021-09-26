@@ -11,7 +11,7 @@ namespace Tracer2.TracerAPI
     {
         private TraceResult result;
         private ThreadWatch watch;
-
+        private readonly object balanceLock = new object();
         public Tracer()
         {
             result = new TraceResult();
@@ -23,33 +23,41 @@ namespace Tracer2.TracerAPI
             return result;
         }
 
-        private (String method, String _class, int thread, String[,] path) GenerateInfo(StackTrace stackTrace) {
+        private (String method, String _class, int thread, String[,] path) GenerateInfo(StackTrace stackTrace,int threadId) {
             StackFrame[] stackFrames = stackTrace.GetFrames();
+            
             String[,] Path = null;
-            if (stackFrames.Length > 1)
+            if (stackFrames.Length > 2)
             {
-                Path = new String[stackFrames.Length - 1, 2];
-                int size = stackFrames.Length - 1;
-                for (int i = 0; i < size; i++)//get path consisting of methodth from last to 1(not 0 !) 
+                int size = stackFrames.Length;
+                Path = new String[size - 2, 2];
+                for (int i = 0; i < size - 2; i++)//get path consisting of methods from last to 2(not 1 !(it start and stop)) 
                 {
-                    Path[i, 0] = stackFrames[size - i].GetMethod().Name;
-                    Path[i, 1] = stackFrames[size - i].GetType().Name;
+                    var method = stackFrames[size - 1 - i].GetMethod();
+                    Path[i, 0] = method.Name;
+                    Path[i, 1] = method.ReflectedType.Name;
                 }
             }
-            return (method: stackFrames[0].GetMethod().Name,
-                    _class: stackFrames[0].GetType().Name,
-                    thread: Thread.CurrentThread.ManagedThreadId,
+            var m = stackFrames[1].GetMethod();
+            return (method: m.Name,
+                    _class: m.ReflectedType.Name,
+                    thread: threadId,
                     path  : Path);
         }
 
         void ITracer.StartTrace()
         {
             long start = watch.GetThreadTimes();
+            
             StackTrace stackTrace = new StackTrace();
+            int threadId = Thread.CurrentThread.ManagedThreadId;
             //разделить два потока для правильного подсчёта времени
             Thread thread = new Thread(() => {
-                var info = GenerateInfo(stackTrace);
-                result.AddNewMethod(info.method,info._class,info.thread,info.path,start);
+                lock (balanceLock)
+                {
+                    var info = GenerateInfo(stackTrace, threadId);
+                    result.AddNewMethod(info.method, info._class, info.thread, info.path, start);
+                }
             });
             thread.Start();
         }
@@ -58,10 +66,14 @@ namespace Tracer2.TracerAPI
         {
             long end = watch.GetThreadTimes();
             StackTrace stackTrace = new StackTrace();
+            int threadId = Thread.CurrentThread.ManagedThreadId;
             //разделить два потока для правильного подсчёта времени
             Thread thread = new Thread(() => {
-                var info = GenerateInfo(stackTrace);
-                result.StopMetod(info.method, info._class, info.thread, info.path, end);
+                lock (balanceLock)
+                {
+                    var info = GenerateInfo(stackTrace, threadId);
+                    result.StopMetod(info.method, info._class, info.thread, info.path, end);
+                }
             });
             thread.Start();
         }

@@ -6,7 +6,7 @@ namespace Tracer2.TracerAPI.Writer
 {
     class ConsoleWriter : IWriter
     {
-        public void WriteAsync(string data)
+        public void Write(string data)
         {
             Console.WriteLine(data);
         }
