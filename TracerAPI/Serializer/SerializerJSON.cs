@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json;
 using Tracer2.TracerAPI.Data;
 
 namespace Tracer2.TracerAPI.Serializer
