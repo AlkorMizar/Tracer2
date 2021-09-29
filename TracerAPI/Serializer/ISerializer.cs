@@ -8,6 +8,5 @@ namespace Tracer2.TracerAPI.Serializer
     interface ISerializer
     {
         String Serialize(TraceResult obj);
-        TraceResult Deserialize(String data);
     }
 }

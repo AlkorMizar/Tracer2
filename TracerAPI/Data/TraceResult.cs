@@ -22,7 +22,7 @@ namespace Tracer2.TracerAPI.Data
         {
             threads = new ConcurrentQueue<ThreadNode>();
         }
-        public void AddNewMethod(String name,String className,int threadId,String[,] path, long startTime)
+        public void AddNewMethod(MethodInfo current, int threadId, MethodInfo[] path, long startTime)
         {
             ThreadNode thread;
             lock (balanceLock)
@@ -35,10 +35,10 @@ namespace Tracer2.TracerAPI.Data
                     threads.Enqueue(thread);
                 }
             }
-            thread.StartNewMethod(name,className,path,startTime);
+            thread.StartNewMethod(current,path,startTime);
         }
 
-        public void StopMetod(String name, String className, int threadId, String[,] path, long endTime) 
+        public void StopMetod(MethodInfo current, int threadId, MethodInfo[] path, long endTime) 
         {
             ThreadNode thread;
             lock (balanceLock)
@@ -48,7 +48,7 @@ namespace Tracer2.TracerAPI.Data
             
             if (thread != null)
             {
-                thread.StopMethod(name, className, path, endTime);
+                thread.StopMethod(current, path, endTime);
             }
         }
 

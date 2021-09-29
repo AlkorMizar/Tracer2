@@ -27,10 +27,6 @@ namespace Tracer2.TracerAPI.Serializer
             { instance = new SerializerJSON(); }
             return instance;
         }
-        public TraceResult Deserialize(string data)
-        {
-            return (TraceResult)JsonSerializer.Deserialize(data, typeof(TraceResult), options);
-        }
 
         public string Serialize(TraceResult obj)
         {

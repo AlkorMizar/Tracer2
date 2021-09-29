@@ -23,24 +23,34 @@ namespace Tracer2.TracerAPI
             return result;
         }
 
-        private (String method, String _class, int thread, String[,] path) GenerateInfo(StackTrace stackTrace,int threadId) {
+        private bool IsThreadFunction(System.Reflection.MethodBase method)
+        {
+            return method.Name.Equals("ThreadStart") &&
+                   method.ReflectedType.Name.Equals("System.Threading");
+        }
+
+        private (MethodInfo current, int thread, MethodInfo[] path) GenerateInfo(StackTrace stackTrace,int threadId) {
             StackFrame[] stackFrames = stackTrace.GetFrames();
-            
-            String[,] Path = null;
-            if (stackFrames.Length > 2)
+            int size = stackFrames.Length;
+            MethodInfo[] Path = null;
+            if (IsThreadFunction(stackFrames[size - 1].GetMethod()))
             {
-                int size = stackFrames.Length;
-                Path = new String[size - 2, 2];
-                for (int i = 0; i < size - 2; i++)//get path consisting of methods from last to 2(not 1 !(it start and stop)) 
+                size -= 3;
+            }
+
+            if (size > 2)
+            {
+                Path = new MethodInfo[size-2];
+                for (int i = 2; i < size; i++)//get path consisting of methods from last to 2(not 1 !(it start and stop)) 
                 {
-                    var method = stackFrames[size - 1 - i].GetMethod();
-                    Path[i, 0] = method.Name;
-                    Path[i, 1] = method.ReflectedType.Name;
+                    var method = stackFrames[i].GetMethod();
+                    int id = i == size - 1 ? 0 : stackFrames[i + 1].GetILOffset();
+                    Path[size - 1 - i] = new MethodInfo(method.Name, method.ReflectedType.Name, id);
                 }
             }
             var m = stackFrames[1].GetMethod();
-            return (method: m.Name,
-                    _class: m.ReflectedType.Name,
+            MethodInfo meth = new MethodInfo(m.Name, m.ReflectedType.Name, stackFrames[2].GetILOffset());
+            return (current: meth,
                     thread: threadId,
                     path  : Path);
         }
@@ -50,13 +60,14 @@ namespace Tracer2.TracerAPI
             long start = watch.GetThreadTimes();
             
             StackTrace stackTrace = new StackTrace();
+
             int threadId = Thread.CurrentThread.ManagedThreadId;
             //разделить два потока для правильного подсчёта времени
             Thread thread = new Thread(() => {
                 lock (balanceLock)
                 {
                     var info = GenerateInfo(stackTrace, threadId);
-                    result.AddNewMethod(info.method, info._class, info.thread, info.path, start);
+                    result.AddNewMethod(info.current, info.thread, info.path, start);
                 }
             });
             thread.Start();
@@ -72,7 +83,7 @@ namespace Tracer2.TracerAPI
                 lock (balanceLock)
                 {
                     var info = GenerateInfo(stackTrace, threadId);
-                    result.StopMetod(info.method, info._class, info.thread, info.path, end);
+                    result.StopMetod(info.current, info.thread, info.path, end);
                 }
             });
             thread.Start();

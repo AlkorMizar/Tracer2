@@ -19,14 +19,6 @@ namespace Tracer2.TracerAPI.Serializer
             { instance = new SerializerXml(); }
             return instance;
         }
-        public TraceResult Deserialize(string data)
-        {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(TraceResult));
-            using (var sr = new StringReader(data))
-            {
-                return (TraceResult)xmlSerializer.Deserialize(sr);
-            }
-        }
 
         public string Serialize(TraceResult obj)
         {

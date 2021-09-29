@@ -28,10 +28,5 @@ namespace Tracer2.TracerAPI.Serializer
         {
             return JsonConvert.SerializeObject(obj, Formatting.Indented);
         }
-
-        public TraceResult Deserialize(string data)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

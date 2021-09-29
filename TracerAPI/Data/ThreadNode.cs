@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace Tracer2.TracerAPI.Data
@@ -11,15 +6,15 @@ namespace Tracer2.TracerAPI.Data
     [Serializable]
     public class ThreadNode
     {
-        [XmlAttribute]
-        public int Id { get;   set; }
-
-        [XmlAttribute]
-        public long Time { get;   set; }
-
         [System.Text.Json.Serialization.JsonIgnore,
          XmlIgnore,
          Newtonsoft.Json.JsonIgnore]
+        public int Id { get;   set; }
+
+        [XmlAttribute]
+        public long Time { get { return root.Time; }   set { } }
+
+        [XmlAttribute]
         public int Number { get;  set; }
 
         private readonly MethodNode root;
@@ -38,51 +33,56 @@ namespace Tracer2.TracerAPI.Data
             root = new MethodNode();
         }
 
-        public void StartNewMethod(String methodName, String className,String[,] path,long startTime) {
+
+        private MethodNode CreatePath(MethodInfo[] path) {
+            MethodNode method = root,
+                       previous=method;
+            int i = 0;
+            while (method != null && i < path.Length)
+            {
+                previous = method;
+                method = method.GetInnerMethod(path[i]);
+                i++;
+            }
+            for (i--; i <path.Length; i++)
+            {
+                MethodNode newMeth = new MethodNode(path[i]);
+                previous.AddInnerMethod(newMeth);
+                previous = newMeth;
+            }
+            return previous;
+        }
+
+        public void StartNewMethod(MethodInfo methodInfo,MethodInfo[] path,long startTime) {
             MethodNode previousMethod = GetMethod(path);
             if (previousMethod == null)
             {
-                previousMethod = root;    
+                previousMethod = CreatePath(path);    
             }
-
-            previousMethod.AddInnerMethod(new MethodNode(methodName, className, startTime));
-
+            previousMethod.AddInnerMethod(new MethodNode(methodInfo, startTime));
         }
-        public void StopMethod(String methodName, String className, String[,] path, long endTime) {
-            
+        public void StopMethod(MethodInfo methodInfo, MethodInfo[] path, long endTime) {
             MethodNode method = GetMethod(path);
             if (method == null)
             {
                 method = root;
             }
-            method = method.GetInnerMethod(methodName, className);
+            method = method.GetInnerMethod(methodInfo);
             if (method != null)
             {
                 method.Stop(endTime);
-                RecountTime();
             }
             
         }
-        private MethodNode GetMethod(String[,] path)
+        private MethodNode GetMethod(MethodInfo[] path)
         {
             MethodNode method = root;
             int i = 0;
             while (method != null && i<path.Length) {
-                method = method.GetInnerMethod(path[i, 0], path[i, 1]);
+                method = method.GetInnerMethod(path[i]);
                 i++;
             }
             return method;
-        }
-        private void RecountTime()
-        {
-            Time = 0;
-            foreach(var rootMethod in root)
-            {
-                if (!rootMethod.IsActive)
-                {
-                    Time += rootMethod.Time;
-                }
-            }
         }
     }
 }

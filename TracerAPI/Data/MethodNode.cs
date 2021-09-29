@@ -21,14 +21,32 @@ namespace Tracer2.TracerAPI.Data
 
         private long time;
         [ XmlAttribute]
-        public long Time { get;   set; }
+        public long Time { 
+            get {
+                if (IsUnregistered) {
+                    time = 0;
+                    foreach (var meth in innerMethods)
+                    {
+                        time += meth.Time;
+                    }
+                }
+                return time;
+            } 
+            set {  } }
         
         [System.Text.Json.Serialization.JsonIgnore, 
          XmlIgnore,
          Newtonsoft.Json.JsonIgnore]
         public bool IsActive { get; private set; }
 
-        private ConcurrentStack<MethodNode> innerMethods;
+        [System.Text.Json.Serialization.JsonIgnore,
+         XmlIgnore,
+         Newtonsoft.Json.JsonIgnore]
+        public bool IsUnregistered { get; private set; }
+
+        private int id;
+
+        private ConcurrentQueue<MethodNode> innerMethods;
 
         [XmlElement(IsNullable = false)]
         public MethodNode[] InnerMethods { get { return innerMethods.ToArray(); } set { } }
@@ -47,35 +65,49 @@ namespace Tracer2.TracerAPI.Data
         {
             Name = "";
             ClassName = "";
-            innerMethods = new ConcurrentStack<MethodNode>();
+            id = default(int);
+            innerMethods = new ConcurrentQueue<MethodNode>();
             IsActive = true;
-            Time = 0;
+            IsUnregistered = true;
+            time=0;
         }
 
-        public MethodNode(String _name, String _className, long start)
+        public MethodNode(MethodInfo info, long start)
         {
-            Name = _name;
-            ClassName = _className;
-            innerMethods = new ConcurrentStack<MethodNode>();
+            Name = info.NameMeth;
+            ClassName = info.NameClass;
+            id = info.ID;
+            innerMethods = new ConcurrentQueue<MethodNode>();
             IsActive = true;
+            IsUnregistered = false;
             time = start;
+        }
+
+        public MethodNode(MethodInfo info)
+        {
+            Name = info.NameMeth;
+            ClassName = info.NameClass;
+            id = info.ID;
+            innerMethods = new ConcurrentQueue<MethodNode>();
+            IsActive = true;
+            IsUnregistered = true;
         }
 
         public void AddInnerMethod(MethodNode method)
         {
-            innerMethods.Push(method);
+            innerMethods.Enqueue(method);
         }
 
         public void Stop(long end) {
-            Time = (end-time) / 10000;
+            time = (end-time) / 10000;
             IsActive = false;
         }
 
-        public MethodNode GetInnerMethod(String name, String className) {
+        public MethodNode GetInnerMethod(MethodInfo methodInfo) {
             
             foreach (var method in innerMethods)
             {
-                if (method.IsThatMethod(name,className))
+                if (method.IsThatMethod(methodInfo))
                 {
                     return method;
                 }
@@ -84,16 +116,12 @@ namespace Tracer2.TracerAPI.Data
         
         }
 
-        private bool IsThatMethod(String name, String className) {
+        private bool IsThatMethod(MethodInfo info) {
             lock (balanceLock)
             {
-                return Name == name && ClassName == className && IsActive;
+                return Name == info.NameMeth && ClassName == info.NameClass
+                       && id==info.ID && IsActive;
             }
-        }
-
-        public IEnumerator<MethodNode> GetEnumerator()
-        {
-            return innerMethods.GetEnumerator();
         }
     }
 }
