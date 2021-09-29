@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 
@@ -13,14 +8,18 @@ namespace Tracer2.TracerAPI.Data
     [Serializable]
     public class MethodNode
     {
-        [ XmlAttribute]
+        [XmlAttribute(AttributeName = "name"),
+         JsonProperty("name")]
         public String Name { get;   set; }
 
-        [ XmlAttribute]
-        public String ClassName { get;   set; }
+        [XmlAttribute(AttributeName = "class"),
+         JsonProperty("class")]
+        public string ClassName { get;   set; }
 
         private long time;
-        [ XmlAttribute]
+
+        [XmlAttribute(AttributeName = "time"),
+         JsonProperty("time")]
         public long Time { 
             get {
                 if (IsUnregistered) {
@@ -34,14 +33,12 @@ namespace Tracer2.TracerAPI.Data
             } 
             set {  } }
         
-        [System.Text.Json.Serialization.JsonIgnore, 
-         XmlIgnore,
-         Newtonsoft.Json.JsonIgnore]
+        [XmlIgnore,
+         JsonIgnore]
         public bool IsActive { get; private set; }
 
-        [System.Text.Json.Serialization.JsonIgnore,
-         XmlIgnore,
-         Newtonsoft.Json.JsonIgnore]
+        [XmlIgnore,
+         JsonIgnore]
         public bool IsUnregistered { get; private set; }
 
         private int id;
@@ -49,12 +46,12 @@ namespace Tracer2.TracerAPI.Data
         private ConcurrentQueue<MethodNode> innerMethods;
 
         [XmlElement(IsNullable = false)]
-        public MethodNode[] InnerMethods { get { return innerMethods.ToArray(); } set { } }
+        public MethodNode[] methods { get { return innerMethods.ToArray(); } set { } }
 
         public bool ShouldSerializeInnerMethods()
         {
             // don't serialize the Manager property if an employee is their own manager
-            return (InnerMethods.Length != 0);
+            return (methods.Length != 0);
         }
 
         [System.Text.Json.Serialization.JsonIgnore,

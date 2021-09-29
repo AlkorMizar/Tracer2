@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using System.Xml.Serialization;
 
 namespace Tracer2.TracerAPI.Data
@@ -6,30 +7,30 @@ namespace Tracer2.TracerAPI.Data
     [Serializable]
     public class ThreadNode
     {
-        [System.Text.Json.Serialization.JsonIgnore,
-         XmlIgnore,
-         Newtonsoft.Json.JsonIgnore]
+        [XmlIgnore,
+         JsonIgnore]
         public int Id { get;   set; }
 
-        [XmlAttribute]
+        [XmlAttribute(AttributeName = "time"),
+         JsonProperty("time")]
         public long Time { get { return root.Time; }   set { } }
 
-        [XmlAttribute]
+        [XmlAttribute(AttributeName ="id"),
+         JsonProperty("id")]
         public int Number { get;  set; }
 
         private readonly MethodNode root;
-        public MethodNode[] Root { get { return root.InnerMethods; } set { } }
+        public MethodNode[] methods { get { return root.methods; } set { } }
 
-        [System.Text.Json.Serialization.JsonIgnore, 
-         XmlIgnore,
-         Newtonsoft.Json.JsonIgnore]
+        [XmlIgnore,
+         JsonIgnore]
         private readonly object balanceLock = new object();
 
         public ThreadNode() { }
 
         public ThreadNode(int id, int number) {
             Id = id;
-            Number = number;
+            Number = number+1;
             root = new MethodNode();
         }
 
