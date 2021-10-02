@@ -8,7 +8,7 @@ using Tracer2.TracerAPI.Data;
 
 namespace Tracer2.TracerAPI.Serializer
 {
-    class SerializerJSON_NET:ISerializer
+    public class SerializerJSON_NET:ISerializer
     {
         private static SerializerJSON_NET instance;
         private JsonSerializer serializer;

@@ -18,9 +18,5 @@ namespace Tracer2.TracerAPI.Data
             NameClass = classN;
             ID = id;
         }
-
-        public string ToString() {
-            return NameMeth + " " + NameClass + " " + ID;
-        }
     }
 }

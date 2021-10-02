@@ -52,7 +52,7 @@ namespace Tracer2.TracerAPI.Data
             }
         }
 
-        private ThreadNode GetThread(int threadId) {
+        public ThreadNode GetThread(int threadId) {
             foreach (var thread in threads)
             {
                 if (thread.Id == threadId)

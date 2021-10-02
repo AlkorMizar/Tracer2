@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Tracer2.TracerAPI.Writer
 {
-    class FileWriter : IWriter
+    public class FileWriter : IWriter
     {
         public void Write(string data)
         {

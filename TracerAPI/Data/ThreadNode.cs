@@ -75,13 +75,17 @@ namespace Tracer2.TracerAPI.Data
             }
             
         }
-        private MethodNode GetMethod(MethodInfo[] path)
+        public MethodNode GetMethod(MethodInfo[] path)
         {
             MethodNode method = root;
-            int i = 0;
-            while (method != null && i<path.Length) {
-                method = method.GetInnerMethod(path[i]);
-                i++;
+            if (path != null)
+            {
+                int i = 0;
+                while (method != null && i < path.Length)
+                {
+                    method = method.GetInnerMethod(path[i]);
+                    i++;
+                }
             }
             return method;
         }

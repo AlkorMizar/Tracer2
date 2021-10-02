@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Tracer2.TracerAPI;
+using Tracer2.TracerAPI.Data;
 using Tracer2.TracerAPI.Serializer;
 using Tracer2.TracerAPI.Writer;
 
@@ -13,6 +14,7 @@ namespace Tracer2
         {
 
             _tracer = new Tracer();
+            _tracer.StartTrace();
             M0();
             Thread th = new Thread(M0);
             th.Start();
@@ -20,16 +22,19 @@ namespace Tracer2
             th2.Start();
             th.Join();
             th2.Join();
+            _tracer.StopTrace();
             IWriter wr = new ConsoleWriter();
-            ISerializer ser = SerializerXml.GetInstance();
+            ISerializer ser = SerializerJSON_NET.GetInstance();
             wr.Write(ser.Serialize(_tracer.GetTraceResult()));
         }
 
         public static void M0()
         {
+            _tracer.StartTrace();
             M1();
             M2();
             M2();
+            _tracer.StopTrace();
         }
 
         private static void M1()

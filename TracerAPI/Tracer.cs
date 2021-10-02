@@ -26,13 +26,17 @@ namespace Tracer2.TracerAPI
         private bool IsThreadFunction(System.Reflection.MethodBase method)
         {
             return method.Name.Equals("ThreadStart") &&
-                   method.ReflectedType.Name.Equals("System.Threading");
+                   method.ReflectedType.Name.Equals("ThreadHelper");
         }
 
         private (MethodInfo current, int thread, MethodInfo[] path) GenerateInfo(StackTrace stackTrace,int threadId) {
             StackFrame[] stackFrames = stackTrace.GetFrames();
             int size = stackFrames.Length;
             MethodInfo[] Path = null;
+
+            var m = stackFrames[1].GetMethod();
+            MethodInfo meth = new MethodInfo(m.Name, m.ReflectedType.Name, 0);
+            
             if (IsThreadFunction(stackFrames[size - 1].GetMethod()))
             {
                 size -= 3;
@@ -40,6 +44,7 @@ namespace Tracer2.TracerAPI
 
             if (size > 2)
             {
+                meth.ID = stackFrames[2].GetILOffset();
                 Path = new MethodInfo[size-2];
                 for (int i = 2; i < size; i++)//get path consisting of methods from last to 2(not 1 !(it start and stop)) 
                 {
@@ -48,8 +53,6 @@ namespace Tracer2.TracerAPI
                     Path[size - 1 - i] = new MethodInfo(method.Name, method.ReflectedType.Name, id);
                 }
             }
-            var m = stackFrames[1].GetMethod();
-            MethodInfo meth = new MethodInfo(m.Name, m.ReflectedType.Name, stackFrames[2].GetILOffset());
             return (current: meth,
                     thread: threadId,
                     path  : Path);

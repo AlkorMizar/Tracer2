@@ -31,7 +31,7 @@ namespace Tracer2.TracerAPI.Data
                 }
                 return time;
             } 
-            set {  } }
+            set { time = value; } }
         
         [XmlIgnore,
          JsonIgnore]
@@ -113,11 +113,11 @@ namespace Tracer2.TracerAPI.Data
         
         }
 
-        private bool IsThatMethod(MethodInfo info) {
+        public bool IsThatMethod(MethodInfo info) {
             lock (balanceLock)
             {
                 return Name == info.NameMeth && ClassName == info.NameClass
-                       && id==info.ID && IsActive;
+                       && id==info.ID ;
             }
         }
     }

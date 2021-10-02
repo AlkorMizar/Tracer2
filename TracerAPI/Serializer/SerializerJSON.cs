@@ -3,7 +3,7 @@ using Tracer2.TracerAPI.Data;
 
 namespace Tracer2.TracerAPI.Serializer
 {
-    class SerializerJSON : ISerializer
+    public class SerializerJSON : ISerializer
     {
         private static SerializerJSON instance;
         private JsonSerializerOptions options;
