@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-16"?>
+<TraceResult xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Threads>
+    <ThreadNode time="1" id="1">
+      <methods>
+        <MethodNode name="MethA" class="ClassA" time="1" />
+      </methods>
+    </ThreadNode>
+    <ThreadNode time="343" id="2">
+      <methods>
+        <MethodNode name="MethA" class="ClassA" time="332">
+          <methods name="MethB" class="ClassA" time="110">
+            <methods name="MethC" class="ClassA" time="8" />
+          </methods>
+          <methods name="MethB" class="ClassA" time="20">
+            <methods name="MethC" class="ClassA" time="8" />
+          </methods>
+        </MethodNode>
+        <MethodNode name="MethA" class="ClassA" time="11" />
+      </methods>
+    </ThreadNode>
+  </Threads>
+</TraceResult>

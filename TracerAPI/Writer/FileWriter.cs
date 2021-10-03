@@ -12,7 +12,7 @@ namespace Tracer2.TracerAPI.Writer
 
             try
             {
-                using (StreamWriter sw = new StreamWriter("result.txt", false, System.Text.Encoding.Default))
+                using (StreamWriter sw = new StreamWriter("..\\..\\..\\result.txt", false, System.Text.Encoding.Default))
                 {
                     sw.WriteLine(data);
                 }

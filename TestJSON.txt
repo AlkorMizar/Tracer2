@@ -1,0 +1,61 @@
+{
+  "Threads": [
+    {
+      "time": 1,
+      "id": 1,
+      "methods": [
+        {
+          "name": "MethA",
+          "class": "ClassA",
+          "time": 1,
+          "methods": []
+        }
+      ]
+    },
+    {
+      "time": 343,
+      "id": 2,
+      "methods": [
+        {
+          "name": "MethA",
+          "class": "ClassA",
+          "time": 332,
+          "methods": [
+            {
+              "name": "MethB",
+              "class": "ClassA",
+              "time": 110,
+              "methods": [
+                {
+                  "name": "MethC",
+                  "class": "ClassA",
+                  "time": 8,
+                  "methods": []
+                }
+              ]
+            },
+            {
+              "name": "MethB",
+              "class": "ClassA",
+              "time": 20,
+              "methods": [
+                {
+                  "name": "MethC",
+                  "class": "ClassA",
+                  "time": 8,
+                  "methods": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "MethA",
+          "class": "ClassA",
+          "time": 11,
+          "methods": []
+        }
+      ]
+    }
+  ]
+}

@@ -7,7 +7,7 @@ using Tracer2.TracerAPI.Data;
 
 namespace Tracer2.TracerAPI.Serializer
 {
-    class SerializerXml : ISerializer
+    public class SerializerXml : ISerializer
     {
         private static SerializerXml instance;
 
